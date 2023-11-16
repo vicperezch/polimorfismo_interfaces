@@ -1,9 +1,10 @@
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * @author Victor Pérez
  * @creationDate 11/11/2023
- * @modificationDate 11/11/2023
+ * @modificationDate 15/11/2023
  * @description Controlador que implementa la interfaz principal
  */
 public class Kayak implements IKayak {
@@ -49,7 +50,22 @@ public class Kayak implements IKayak {
      * @param plan Tipo de plan (premium o no premium)
      */
     public void registroUsuario(String nombreUsuario, String password, String plan) {
-        usuarios.add(new Usuario(nombreUsuario, password, plan));
+        boolean usuarioPermitido = true;
+
+        // Verifica que no existan dos usuarios con el mismo nombre
+        for (Usuario usuario: usuarios) {
+            if (usuario.getNombre().equals(nombreUsuario)) {
+                usuarioPermitido = false;
+            }
+        }
+
+        if (usuarioPermitido) {
+            usuarios.add(new Usuario(nombreUsuario, password, plan));
+            System.out.println("Registro exitoso\n");
+
+        } else {
+            System.out.println("El nombre de usuario no está disponible");
+        }
     }
 
 
@@ -79,7 +95,7 @@ public class Kayak implements IKayak {
      * @param nombreUsuario Nombre del usuario que hace la reservación
      */
     public void reservacion(String fecha, boolean idaVuelta, int boletos, String aerolinea, String nombreUsuario) {
-        this.reservaActual = new Reserva(fecha, idaVuelta, boletos, aerolinea, "", 0, "", "", 0);
+        this.reservaActual = new Reserva(fecha, idaVuelta, boletos, aerolinea, "", 0, "", "", 0, "");
     }
 
     
@@ -92,13 +108,21 @@ public class Kayak implements IKayak {
      * @param maletas Cantidad de maletas
      */
     public void confirmacion(String numTarjeta, int cuotas, String clase, String asiento, int maletas) {
-        reservaActual.setNumTarjeta(numTarjeta);
-        reservaActual.setCuotas(cuotas);
-        reservaActual.setClase(clase);
-        reservaActual.setNumAsiento(asiento);
-        reservaActual.setMaletas(maletas);
 
-        reservas.add(reservaActual);
+        // Revisa que se haya hecho una reservación previa
+        if (reservaActual != null) {
+            reservaActual.setNumTarjeta(numTarjeta);
+            reservaActual.setCuotas(cuotas);
+            reservaActual.setClase(clase);
+            reservaActual.setNumAsiento(asiento);
+            reservaActual.setMaletas(maletas);
+            reservaActual.setUsuario(usuarioActual.getNombre());
+
+            reservas.add(reservaActual);
+
+            System.out.println("Se ha confirmado la reservación\n");
+
+        }
     }
 
 
@@ -107,41 +131,66 @@ public class Kayak implements IKayak {
      * @return String formateada con el itinerario
      */
     public String itinerario(){
-        String itinerario = "";
 
+        if (reservaActual != null) {
+            String itinerario = "ITINERARIO\n" + reservaActual.toString();
+            this.reservaActual = null;
 
-        return itinerario;
+            return itinerario;
+        }
+
+        return "Debe hacer una reserva para poder confirmar";
     }
 
 
     /**
-     * 
+     * Almacena los usuarios en un archivo csv
      */
     public void guardarUsuario() {
-
+        try {
+            archivo.guardarUsuarios(usuarios);
+        
+        } catch (IOException e) {
+            System.out.println("Error al guardar los usuarios");
+        }
     }
 
 
     /**
-     * 
+     * Carga los usuarios de un archivo csv a un ArrayList
      */
     public void leerUsuario() {
+        try {
+            this.usuarios = archivo.leerUsuarios();
 
+        } catch (IOException e) {
+            System.out.println("Error al cargar los usuarios");
+        }
     }
 
 
     /**
-     * 
+     * Almacena las reservas en un archivo csv
      */
     public void guardarReserva(){
+        try {
+            archivo.guardarReservas(reservas);
 
+        } catch (IOException e) {
+            System.out.println("Error al guardar las reservas");
+        }
     }
 
 
     /**
-     * 
+     * Carga las reservas de un archivo csv a un ArrayList
      */
     public void leerReserva() {
+        try {
+            this.reservas = archivo.leerReservas();
 
+        } catch (IOException e) {
+            System.out.println("Error al cargar las reservas");
+        }
     }
 }

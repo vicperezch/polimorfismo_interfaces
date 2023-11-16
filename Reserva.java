@@ -1,7 +1,7 @@
 /**
  * @author Victor Pérez
  * @creationDate 11/11/2023
- * @modificationDate 11/11/2023
+ * @modificationDate 15/11/2023
  * @description Modela una reserva realizada por un usuario y almacena la información
  */
 public class Reserva {
@@ -14,6 +14,7 @@ public class Reserva {
     private String clase;
     private String numAsiento;
     private int maletas;
+    private String usuario;
 
 
     /**
@@ -27,8 +28,9 @@ public class Reserva {
      * @param clase Clase del vuelo (Primera Clase o Coach)
      * @param numAsiento Número del asiento
      * @param maletas Número de maletas
+     * @param usuario Nombre del usuario que hizo la reserva
      */
-    public Reserva(String fecha, boolean idaVuelta, int boletos, String aerolinea, String numTarjeta, int cuotas, String clase, String numAsiento, int maletas) {
+    public Reserva(String fecha, boolean idaVuelta, int boletos, String aerolinea, String numTarjeta, int cuotas, String clase, String numAsiento, int maletas, String usuario) {
         this.fecha = fecha;
         this.idaVuelta = idaVuelta;
         this.boletos = boletos;
@@ -38,6 +40,7 @@ public class Reserva {
         this.clase = clase;
         this.numAsiento = numAsiento;
         this.maletas = maletas;
+        this.usuario = usuario;
     }
 
 
@@ -132,5 +135,27 @@ public class Reserva {
     }
 
 
+    public String getUsuario() {
+        return usuario;
+    }
+
+    
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+
+    /**
+     * Convierte la información de la reserva a una cadena de texto
+     * @return String con la información
+     */
+    public String toString() {
+        if (idaVuelta) {
+            return this.fecha + " | Ida y vuelta | Aerolínea: " + this.aerolinea + " | " + this.boletos + " boletos";
+
+        } else {
+            return this.fecha + " | Ida | Aerolínea: " + this.aerolinea + " | " + this.boletos + " boletos";
+        }
+    }
     
 }

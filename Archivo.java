@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * @author Victor Pérez
  * @creationDate 11/11/2023
- * @modificationDate 11/11/2023
+ * @modificationDate 15/11/2023
  * @description Encargada de la lectura del archivo CSV
  */
 public class Archivo {
@@ -60,12 +60,15 @@ public class Archivo {
             // Lee cada línea del archivo
             while (linea != null) {
                 String[] datos = linea.split(",");
-                usuarios.add(new Usuario(datos[0], datos[1], datos[2]));
+
+                // Salta la línea de encabezado
+                if (!datos[0].equals("nombre")) {
+                    usuarios.add(new Usuario(datos[0], datos[1], datos[2]));
+                }
 
                 linea = lector.readLine();
             }
 
-            System.out.println("Se han cargado los usuarios");
             lector.close();
         }
 
@@ -81,12 +84,12 @@ public class Archivo {
         BufferedWriter escritor = new BufferedWriter(new FileWriter(documentoReservas));
 
         // Escribe el encabezado
-        escritor.write("fecha,idaVuelta,boletos,aerolinea,numero_tarjeta,cuotas,clase,numero_asiento,maletas");
+        escritor.write("fecha,idaVuelta,boletos,aerolinea,numero_tarjeta,cuotas,clase,numero_asiento,maletas,usuario");
         escritor.newLine();
 
         for (Reserva reserva: reservas) {
             escritor.write(reserva.getFecha() + "," + reserva.isIdaVuelta() + "," + reserva.getBoletos() + "," + reserva.getAerolinea() + "," + reserva.getNumTarjeta()
-                            + "," + reserva.getCuotas() + "," + reserva.getClase() + "," + reserva.getNumAsiento() + "," + reserva.getMaletas());
+                            + "," + reserva.getCuotas() + "," + reserva.getClase() + "," + reserva.getNumAsiento() + "," + reserva.getMaletas() + "," + reserva.getUsuario());
             escritor.newLine();
         }
 
@@ -109,13 +112,16 @@ public class Archivo {
             // Lee cada línea del archivo
             while (linea != null) {
                 String[] datos = linea.split(",");
-                reservas.add(new Reserva(datos[0], Boolean.parseBoolean(datos[1]), Integer.parseInt(datos[2]), datos[3], datos[4], Integer.parseInt(datos[5]), 
-                            datos[6], datos[7], Integer.parseInt(datos[8])));
+
+                // Se salta el encabezado
+                if (!datos[0].equals("fecha")) {
+                    reservas.add(new Reserva(datos[0], Boolean.parseBoolean(datos[1]), Integer.parseInt(datos[2]), datos[3], datos[4], Integer.parseInt(datos[5]), 
+                                datos[6], datos[7], Integer.parseInt(datos[8]), datos[9]));
+                }
 
                 linea = lector.readLine();
             }
 
-            System.out.println("Se han cargado las reservas");
             lector.close();
         }
 
